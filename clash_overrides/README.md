@@ -1,4 +1,4 @@
-# Clash Verge 覆写脚本说明
+# Clash 系 VPN 客户端覆写脚本说明
 
 本目录用于保存 Clash Verge / Clash Verge Rev / FlClash 的 JavaScript 覆写脚本：
 
