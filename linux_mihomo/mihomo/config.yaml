@@ -1,0 +1,337 @@
+mixed-port: 7890
+allow-lan: true
+bind-address: "*"
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+
+external-controller: 0.0.0.0:9090 # 访问管理面板时，在浏览器输入mihomo所在机器的ip地址和端口，如 http://10.100.10.xxx:9090/ui/#/overview
+secret: "在这里设置密码" # 登录密钥
+external-ui: ui-metacubexd
+
+profile:
+  store-selected: true
+  store-fake-ip: true
+
+dns:
+  enable: true
+  ipv6: false
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  proxy-server-nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query
+  fallback:
+    - tls://1.1.1.1:853
+    - tls://8.8.8.8:853
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+
+tun:
+  enable: false
+  stack: mixed
+  dns-hijack:
+    - any:53
+  auto-route: true
+  auto-detect-interface: true
+
+proxy-providers:
+  良心云:
+    type: http
+    url: "填良心云的订阅链接"
+    path: ./providers/liangxinyun.yaml
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+
+  魔戒:
+    type: http
+    url: "填魔戒的订阅链接"
+    path: ./providers/mojie.yaml
+    header:
+      User-Agent:
+        - "clash-verge-rev/v2.3.2"
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+
+proxy-groups:
+  - name: 节点选择
+    type: select
+    proxies:
+      - 全部节点
+      - 自动选择
+      - 故障转移
+      - AI自动选择
+      - 良心云兜底
+      - 魔戒兜底
+      - 良心云节点
+      - 良心云自动选择
+      - 良心云故障转移
+      - 良心云新加坡自动
+      - 良心云日本自动
+      - 良心云美国自动
+      - AI良心云
+      - AI良心云自动
+      - 良心云新加坡
+      - 良心云日本
+      - 良心云美国
+      - 魔戒节点
+      - 魔戒自动选择
+      - 魔戒故障转移
+      - 魔戒新加坡自动
+      - 魔戒日本自动
+      - 魔戒美国自动
+      - AI魔戒
+      - AI魔戒自动
+      - 魔戒新加坡
+      - 魔戒日本
+      - 魔戒美国
+      - DIRECT
+
+  - name: 全部节点
+    type: select
+    proxies:
+      - 良心云节点
+      - 魔戒节点
+      - DIRECT
+
+  - name: 自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - 良心云自动选择
+      - 魔戒自动选择
+
+  - name: 故障转移
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - 良心云故障转移
+      - 魔戒故障转移
+
+  - name: AI自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - AI良心云自动
+      - AI魔戒自动
+
+  - name: 良心云兜底
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - 良心云新加坡自动
+      - 良心云日本自动
+      - 良心云美国自动
+      - AI自动选择
+
+  - name: 魔戒兜底
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - 魔戒新加坡自动
+      - 魔戒日本自动
+      - 魔戒美国自动
+      - AI自动选择
+
+  - name: 良心云节点
+    type: select
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 良心云
+
+  - name: 良心云自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 良心云
+
+  - name: 良心云故障转移
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 良心云
+
+  - name: 良心云新加坡自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    filter: "(?i)新加坡|狮城|🇸🇬|SG|Singapore"
+    use:
+      - 良心云
+
+  - name: 良心云日本自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    filter: "(?i)日本|🇯🇵|JP|Japan"
+    use:
+      - 良心云
+
+  - name: 良心云美国自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    filter: "(?i)美国|美國|🇺🇸|US|USA|United States|LA"
+    use:
+      - 良心云
+
+  - name: AI良心云自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
+    use:
+      - 良心云
+
+  - name: AI良心云
+    type: select
+    proxies:
+      - AI良心云自动
+    exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
+    use:
+      - 良心云
+
+  - name: 良心云新加坡
+    type: select
+    filter: "(?i)新加坡|狮城|🇸🇬|SG|Singapore"
+    use:
+      - 良心云
+
+  - name: 良心云日本
+    type: select
+    filter: "(?i)日本|🇯🇵|JP|Japan"
+    use:
+      - 良心云
+
+  - name: 良心云美国
+    type: select
+    filter: "(?i)美国|美國|🇺🇸|US|USA|United States|LA"
+    use:
+      - 良心云
+
+  - name: 魔戒节点
+    type: select
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 魔戒
+
+  - name: 魔戒自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 魔戒
+
+  - name: 魔戒故障转移
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 魔戒
+
+  - name: 魔戒新加坡自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    filter: "(?i)新加坡|狮城|🇸🇬|SG|Singapore"
+    use:
+      - 魔戒
+
+  - name: 魔戒日本自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    filter: "(?i)日本|🇯🇵|JP|Japan"
+    use:
+      - 魔戒
+
+  - name: 魔戒美国自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    filter: "(?i)美国|美國|🇺🇸|US|USA|United States|LA"
+    use:
+      - 魔戒
+
+  - name: AI魔戒自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
+    use:
+      - 魔戒
+
+  - name: AI魔戒
+    type: select
+    proxies:
+      - AI魔戒自动
+    exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
+    use:
+      - 魔戒
+
+  - name: 魔戒新加坡
+    type: select
+    filter: "(?i)新加坡|狮城|🇸🇬|SG|Singapore"
+    use:
+      - 魔戒
+
+  - name: 魔戒日本
+    type: select
+    filter: "(?i)日本|🇯🇵|JP|Japan"
+    use:
+      - 魔戒
+
+  - name: 魔戒美国
+    type: select
+    filter: "(?i)美国|美國|🇺🇸|US|USA|United States|LA"
+    use:
+      - 魔戒
+
+rules:
+  - IP-CIDR,192.168.30.0/24,DIRECT,no-resolve # 192.168.30.0 内网地址 整个网段都走直连 不需要可以注释
+  - GEOSITE,category-ads-all,REJECT
+  - DOMAIN-SUFFIX,openai.com,节点选择
+  - DOMAIN-SUFFIX,chatgpt.com,节点选择
+  - DOMAIN-SUFFIX,oaistatic.com,节点选择
+  - DOMAIN-SUFFIX,oaiusercontent.com,节点选择
+  - GEOSITE,cn,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,节点选择
