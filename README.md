@@ -23,6 +23,20 @@
 
 > 根目录只做项目入口和使用导航。具体安装、配置、调整方式请点击上面的子目录 README 查看。
 
+## 效果图
+
+### MetaCubeXD
+
+![MetaCubeXD 节点选择效果图](./img/ui-metacubexd.png)
+
+### Clash Verge
+
+![Clash Verge 代理组效果图](./img/clash_verge.png)
+
+### FlClash
+
+![FlClash 代理组效果图](./img/FlClash.jpg)
+
 ## 如何选择
 
 如果你使用的是桌面或移动端 Clash 系客户端：
