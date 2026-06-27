@@ -3,7 +3,8 @@ mihomo/providers/*
 !mihomo/providers/.gitkeep
 
 # Local-only secrets and environment overrides.
-.env
-.env.*
+# .env
+# .env.*
 *.secret.*
 *.local.*
+.AGENTS.md

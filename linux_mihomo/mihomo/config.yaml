@@ -1,6 +1,19 @@
 mixed-port: 7890
+
+# 允许局域网设备连接本机代理端口。关闭后其他机器无法使用本机 mixed-port。
 allow-lan: true
-bind-address: "*"
+
+# 只监听指定内网地址，避免代理端口暴露到其他网卡。
+# 部署到实际运行目录后，把 <MIHOMO_LAN_IP> 替换为 Mihomo 主机的内网 IP。
+bind-address: "<MIHOMO_LAN_IP>"
+
+# 局域网来源 IP 白名单；只有下面这些机器可以访问本机 mixed-port，使用本机的代理。
+# /32 表示精确到单台主机。按需替换或追加 <LAN_CLIENT_IP>。
+lan-allowed-ips:
+  - 127.0.0.1/32
+  - "<MIHOMO_LAN_IP>/32"
+  - "<LAN_CLIENT_IP>/32"
+
 mode: rule
 log-level: info
 ipv6: false
@@ -9,7 +22,7 @@ tcp-concurrent: true
 
 # 访问管理面板时，在浏览器输入 mihomo 所在机器的 IP 地址和端口，如 http://<mihomo所在机器IP>:9090/ui/#/overview
 external-controller: 0.0.0.0:9090
-secret: "在这里设置密码" # 登录密钥
+secret: ""
 external-ui: ui-metacubexd
 
 profile:
@@ -48,7 +61,7 @@ tun:
 proxy-providers:
   良心云:
     type: http
-    url: "填良心云的订阅链接"
+    url: "<LIANGXINYUN_SUBSCRIPTION_URL>"
     path: ./providers/liangxinyun.yaml
     interval: 21600
     health-check:
@@ -58,7 +71,7 @@ proxy-providers:
 
   魔戒:
     type: http
-    url: "填魔戒的订阅链接"
+    url: "<MOJIE_SUBSCRIPTION_URL>"
     path: ./providers/mojie.yaml
     header:
       User-Agent:
