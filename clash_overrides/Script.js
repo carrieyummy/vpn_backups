@@ -1,4 +1,8 @@
 function main(config, profileName) {
+  // 自动测速/url-test 健康检查间隔，单位：秒。
+  const autoTestInterval = 120;
+  // fallback 兜底健康检查间隔，单位：秒。
+  const fallbackInterval = 120;
   const defaultAutoGroupName = "自动选择";
   const aiGroupName = "AI";
   const aiAutoGroupName = "AI自动";
@@ -297,7 +301,7 @@ function main(config, profileName) {
       type: "url-test",
       proxies: nodes,
       url: "https://www.gstatic.com/generate_204",
-      interval: 300,
+      interval: autoTestInterval,
       tolerance: 50
     };
 
@@ -320,7 +324,7 @@ function main(config, profileName) {
     autoGroup.type = "url-test";
     autoGroup.proxies = nodes;
     autoGroup.url = autoGroup.url || "https://www.gstatic.com/generate_204";
-    autoGroup.interval = autoGroup.interval || 300;
+    autoGroup.interval = autoGroup.interval || autoTestInterval;
     autoGroup.tolerance = autoGroup.tolerance || 50;
 
     if (source?.group && !source.group.proxies.includes(autoGroup.name)) {
@@ -354,7 +358,7 @@ function main(config, profileName) {
     group.type = "url-test";
     group.proxies = nodes;
     group.url = group.url || "https://www.gstatic.com/generate_204";
-    group.interval = group.interval || 300;
+    group.interval = group.interval || autoTestInterval;
     group.tolerance = group.tolerance || 50;
     countryGroupNames.push(group.name);
   }
@@ -375,7 +379,7 @@ function main(config, profileName) {
       group.type = "url-test";
       group.proxies = allAiNodes;
       group.url = group.url || "https://www.gstatic.com/generate_204";
-      group.interval = group.interval || 300;
+      group.interval = group.interval || autoTestInterval;
       group.tolerance = group.tolerance || 50;
     }
   } else {
@@ -438,7 +442,7 @@ function main(config, profileName) {
     ? defaultFallbackCandidates
     : allWantedNodes;
   aiFallbackGroup.url = aiFallbackGroup.url || "https://www.gstatic.com/generate_204";
-  aiFallbackGroup.interval = aiFallbackGroup.interval || 300;
+  aiFallbackGroup.interval = aiFallbackGroup.interval || fallbackInterval;
 
   const preferredMainGroupFirstOptions = unique([
     aiFallbackGroupName,
