@@ -1,0 +1,9 @@
+# Runtime provider data can contain subscription nodes and credentials.
+mihomo/providers/*
+!mihomo/providers/.gitkeep
+
+# Local-only secrets and environment overrides.
+.env
+.env.*
+*.secret.*
+*.local.*

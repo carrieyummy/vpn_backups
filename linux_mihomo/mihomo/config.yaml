@@ -7,7 +7,8 @@ ipv6: false
 unified-delay: true
 tcp-concurrent: true
 
-external-controller: 0.0.0.0:9090 # 访问管理面板时，在浏览器输入mihomo所在机器的ip地址和端口，如 http://10.100.10.xxx:9090/ui/#/overview
+# 访问管理面板时，在浏览器输入 mihomo 所在机器的 IP 地址和端口，如 http://<mihomo所在机器IP>:9090/ui/#/overview
+external-controller: 0.0.0.0:9090
 secret: "在这里设置密码" # 登录密钥
 external-ui: ui-metacubexd
 
@@ -326,7 +327,9 @@ proxy-groups:
       - 魔戒
 
 rules:
-  - IP-CIDR,192.168.30.0/24,DIRECT,no-resolve # 192.168.30.0 内网地址 整个网段都走直连 不需要可以注释
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve # 私网地址直连
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve # 私网地址直连
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve # 私网地址直连
   - GEOSITE,category-ads-all,REJECT
   - DOMAIN-SUFFIX,openai.com,节点选择
   - DOMAIN-SUFFIX,chatgpt.com,节点选择

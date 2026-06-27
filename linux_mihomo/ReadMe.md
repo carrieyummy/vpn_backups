@@ -1,4 +1,6 @@
-# Mihomo 使用说明
+# Mihomo + MetaCubeXD 面板使用说明
+
+本目录用于在 Linux 机器、软路由或远程主机上复用 Mihomo 配置，配合 MetaCubeXD 面板管理节点选择、自动测速和兜底策略，让 OpenAI、ChatGPT 等国外 AI 工具稳定走适合的海外节点。
 
 ## 1. 目录约定
 
@@ -167,9 +169,38 @@ systemctl --user restart mihomo.service
 MIHOMO_DIR="$HOME/.config/mihomo" ./install-ui.sh
 ```
 
+### 5.1 MetaCubeXD 默认后端地址
+
+MetaCubeXD 静态面板的默认后端地址配置在：
+
+```text
+./mihomo/ui-metacubexd/config.js
+```
+
+其中：
+
+```js
+defaultBackendURL: window.location.origin
+```
+
+这个配置会在浏览器打开面板时自动使用当前访问地址作为 Mihomo 后端。例如你访问 `http://<mihomo所在机器的IP>:9090/ui/`，`window.location.origin` 会自动得到 `http://<mihomo所在机器的IP>:9090`。
+
+当前配置里：
+
+```yaml
+external-controller: 0.0.0.0:9090
+external-ui: ui-metacubexd
+```
+
+表示 Mihomo 在本机所有网卡监听 `9090` 端口，并使用 `ui-metacubexd` 作为外部 UI 目录。因此在其他设备浏览器访问时，通常使用：
+
+```text
+http://<mihomo所在机器的IP>:9090/ui/
+```
+
 ## 6. 配置策略与节点优先级
 
-本项目的 `./mihomo/config.yaml` 是一个模板配置，设计目标是稳定地按用途选择节点，避免手动切换。订阅 URL 属于隐私信息，项目里的配置只保留占位符，实际订阅链接应只写在 Mihomo 实际运行目录：
+本项目的 `./mihomo/config.yaml` 是一个模板配置，设计目标是稳定地按用途选择节点、在多个订阅中选择节点、避免手动切换。订阅 URL 属于隐私信息，项目里的配置只保留占位符，实际订阅链接应只写在 Mihomo 实际运行目录：
 
 ```bash
 $HOME/.config/mihomo/config.yaml
@@ -245,7 +276,7 @@ AI自动选择:
   - AI魔戒自动
 ```
 
-`AI良心云自动` 和 `AI魔戒自动` 都排除了香港、台湾、流量信息和套餐到期提示类节点：
+`AI良心云自动` 和 `AI魔戒自动` 都排除了中国节点（香港、台湾）、流量信息和套餐到期提示类节点：
 
 ```yaml
 exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
@@ -294,5 +325,218 @@ mihomo -t -d "$HOME/.config/mihomo" -f "$HOME/.config/mihomo/config.yaml"
 # 修改配置文件以后先reload再重启
 systemctl --user daemon-reload
 
+systemctl --user restart mihomo.service
+```
+
+### 7.3 情况 3：增加一个订阅
+
+下面以新增一个名为 `新订阅` 的订阅为例。订阅名可以自己改，但要保持前后一致。
+
+1. 在 `proxy-providers` 里新增订阅提供者：
+
+```yaml
+proxy-providers:
+  良心云:
+    # 原有配置省略
+
+  魔戒:
+    # 原有配置省略
+
+  新订阅:
+    type: http
+    url: "填新订阅的订阅链接"
+    path: ./providers/new-subscription.yaml
+    interval: 21600
+    health-check:
+      enable: true
+      url: https://www.gstatic.com/generate_204
+      interval: 300
+```
+
+如果这个订阅源需要特殊请求头，例如指定 `User-Agent`，可以参考 `魔戒` 的写法添加 `header`。
+
+1. 在 `proxy-groups` 里为新订阅增加基础策略组：
+
+```yaml
+  - name: 新订阅节点
+    type: select
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 新订阅
+
+  - name: 新订阅自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 新订阅
+
+  - name: 新订阅故障转移
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    exclude-filter: "^(剩余流量|套餐到期)"
+    use:
+      - 新订阅
+
+  - name: AI新订阅自动
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
+    use:
+      - 新订阅
+```
+
+如果需要按地区筛选，也可以继续增加类似 `新订阅新加坡自动`、`新订阅日本自动`、`新订阅美国自动` 的组，写法参考现有的 `良心云新加坡自动`、`魔戒日本自动` 等组。
+
+1. 把新订阅接入上层策略组：
+
+```yaml
+  - name: 节点选择
+    type: select
+    proxies:
+      - 全部节点
+      - 自动选择
+      - 故障转移
+      - AI自动选择
+      - 良心云兜底
+      - 魔戒兜底
+      - 新订阅节点
+      - 新订阅自动选择
+      - 新订阅故障转移
+      - AI新订阅自动
+      - DIRECT
+
+  - name: 全部节点
+    type: select
+    proxies:
+      - 良心云节点
+      - 魔戒节点
+      - 新订阅节点
+      - DIRECT
+
+  - name: 自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - 良心云自动选择
+      - 魔戒自动选择
+      - 新订阅自动选择
+
+  - name: 故障转移
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    proxies:
+      - 良心云故障转移
+      - 魔戒故障转移
+      - 新订阅故障转移
+
+  - name: AI自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies:
+      - AI良心云自动
+      - AI魔戒自动
+      - AI新订阅自动
+```
+
+注意：上面是示例片段，不是让你重复创建已有的 `节点选择`、`全部节点`、`自动选择`、`故障转移`、`AI自动选择`。实际修改时，应在现有同名策略组的 `proxies` 列表里追加对应条目。
+
+### 7.4 情况 4：减少一个订阅
+
+下面以删除 `魔戒` 订阅为例。
+
+1. 从 `proxy-providers` 删除整个 `魔戒` 配置块：
+
+```yaml
+proxy-providers:
+  良心云:
+    # 保留
+
+  # 删除 魔戒: 以及它下面的 type、url、path、header、interval、health-check 等配置
+```
+
+1. 删除所有只使用 `魔戒` 的策略组，例如：
+
+```yaml
+  - name: 魔戒节点
+  - name: 魔戒自动选择
+  - name: 魔戒故障转移
+  - name: 魔戒新加坡自动
+  - name: 魔戒日本自动
+  - name: 魔戒美国自动
+  - name: AI魔戒自动
+  - name: AI魔戒
+  - name: 魔戒新加坡
+  - name: 魔戒日本
+  - name: 魔戒美国
+  - name: 魔戒兜底
+```
+
+删除时要删掉每个 `- name: ...` 对应的完整 YAML 块，不能只删名字。
+
+1. 从上层策略组里删除对 `魔戒` 相关组的引用：
+
+```yaml
+  - name: 节点选择
+    proxies:
+      # 删除这些引用
+      # - 魔戒兜底
+      # - 魔戒节点
+      # - 魔戒自动选择
+      # - 魔戒故障转移
+      # - 魔戒新加坡自动
+      # - 魔戒日本自动
+      # - 魔戒美国自动
+      # - AI魔戒
+      # - AI魔戒自动
+      # - 魔戒新加坡
+      # - 魔戒日本
+      # - 魔戒美国
+
+  - name: 全部节点
+    proxies:
+      # 删除:
+      # - 魔戒节点
+
+  - name: 自动选择
+    proxies:
+      # 删除:
+      # - 魔戒自动选择
+
+  - name: 故障转移
+    proxies:
+      # 删除:
+      # - 魔戒故障转移
+
+  - name: AI自动选择
+    proxies:
+      # 删除:
+      # - AI魔戒自动
+```
+
+减少订阅后，最容易出错的是 `proxies` 里还残留已删除的策略组名称，或者 `use` 里还引用已删除的订阅提供者。修改后一定要校验配置。
+
+### 7.5 修改后校验并重启
+
+不管是增加、删除还是改订阅链接，修改后都建议先校验：
+
+```bash
+mihomo -t -d "$HOME/.config/mihomo" -f "$HOME/.config/mihomo/config.yaml"
+```
+
+校验通过后再重启：
+
+```bash
+systemctl --user daemon-reload
 systemctl --user restart mihomo.service
 ```
