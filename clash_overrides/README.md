@@ -109,6 +109,24 @@ const forceProxyDomains = [];
 
 如果要增加其他 AI 服务域名，直接继续添加 `DOMAIN-SUFFIX` 对应的主域名即可。
 
+## 生成本地版 `Script.local.js` 的提示词
+
+`Script.local.js` 是在 `Script.js` 基础上维护的本地版本，可用于保留个人自定义域名。它不应提交到仓库。需要用 AI 生成或同步本地版本时，可将下面的提示词连同当前的 `Script.js` 和现有 `Script.local.js` 一起提供给 AI：
+
+```text
+请以 `clash_overrides/Script.js` 为上游源文件，生成并写入
+`clash_overrides/Script.local.js`。
+
+要求：
+1. 完整同步 `Script.js` 的最新功能、结构、注释和配置；除个人自定义域名区块外，两者应保持一致。
+2. 保留现有 `Script.local.js` 中由 START 和 END 标记界定的个人自定义域名区块，不能删除、改写、移动或在回复中展示其中的域名。
+3. 若本地文件尚不存在该区块，则在与 `forceProxyDomains` 相关的位置创建清晰的 START/END 标记，并仅在该区块中添加由用户另行提供的自定义域名。
+4. 个人域名只能存在于 `Script.local.js`，绝不能写入 `Script.js`、README、提交信息或任何共享文件。
+5. 不要写入真实订阅 URL、IP 地址、代理地址、密钥或其他私密运行值；需要时使用占位符。
+6. 只修改 `clash_overrides/Script.local.js`，不要修改 `Script.js`。
+7. 完成后检查 JavaScript 语法，并简要说明是否成功保留了本地区块；不要输出本地区块的具体内容。
+```
+
 ## 强制直连域名
 
 `forceDirectDomains` 用于指定必须直连的域名。当前主要包含 Outlook、Teams、Microsoft 登录、Office、OneDrive、Windows 网络检测相关域名。

@@ -10,29 +10,78 @@ function main(config, profileName) {
   const countryAutoGroups = [
     {
       name: "新加坡自动",
-      keywords: ["新加坡", "狮城", "SG", "SGP", "Singapore", "🇸🇬"]
+      keywords: ["新加坡", "狮城", "SG", "SGP", "Singapore", "🇸🇬"],
     },
     {
       name: "日本自动",
-      keywords: ["日本", "东京", "大阪", "JP", "JPN", "Japan", "Tokyo", "Osaka", "🇯🇵"]
+      keywords: [
+        "日本",
+        "东京",
+        "大阪",
+        "JP",
+        "JPN",
+        "Japan",
+        "Tokyo",
+        "Osaka",
+        "🇯🇵",
+      ],
     },
     {
       name: "美国自动",
-      keywords: ["美国", "美國", "美", "US", "USA", "United States", "America", "Los Angeles", "San Jose", "Seattle", "Dallas", "New York", "🇺🇸"]
-    }
+      keywords: [
+        "美国",
+        "美國",
+        "美",
+        "US",
+        "USA",
+        "United States",
+        "America",
+        "Los Angeles",
+        "San Jose",
+        "Seattle",
+        "Dallas",
+        "New York",
+        "🇺🇸",
+      ],
+    },
   ];
 
   const blockKeywords = [
-    "香港", "港", "HK", "HKG", "Hong Kong", "HongKong", "🇭🇰",
-    "台湾", "台灣", "台北", "臺北", "TW", "TWN", "Taiwan", "Taipei", "TPE", "🇹🇼"
+    "香港",
+    "港",
+    "HK",
+    "HKG",
+    "Hong Kong",
+    "HongKong",
+    "🇭🇰",
+    "台湾",
+    "台灣",
+    "台北",
+    "臺北",
+    "TW",
+    "TWN",
+    "Taiwan",
+    "Taipei",
+    "TPE",
+    "🇹🇼",
   ];
 
   const infoKeywords = [
-    "剩余流量", "套餐到期", "距离下次", "官网", "流量", "到期", "过期",
-    "expire", "traffic", "subscription", "官网", "重置"
+    "剩余流量",
+    "套餐到期",
+    "距离下次",
+    "官网",
+    "流量",
+    "到期",
+    "过期",
+    "expire",
+    "traffic",
+    "subscription",
+    "官网",
+    "重置",
   ];
-  
-  // 对AI域名强制代理：如果不需要可以注释掉留空数组 
+
+  // 对AI域名强制代理：如果不需要可以注释掉留空数组
   const forceProxyDomains = [
     // OpenAI
     "openai.com",
@@ -40,7 +89,7 @@ function main(config, profileName) {
     "api.openai.com",
     "auth.openai.com",
     "oaistatic.com",
-    "oaiusercontent.com"
+    "oaiusercontent.com",
   ];
 
   // 强制直连：Outlook、Teams、Windows网路检测
@@ -75,7 +124,7 @@ function main(config, profileName) {
     "login.microsoftonline.com",
     "microsoftonline.com",
     "msftauth.net",
-    "msauth.net"
+    "msauth.net",
   ];
 
   // Clash/mihomo 自己在向这些 DNS 服务器查询域名，但它被规则匹配到 良心云 走代理了。
@@ -127,10 +176,12 @@ function main(config, profileName) {
 
   function isAiAutoGroupName(name) {
     const text = String(name || "");
-    return name !== aiGroupName &&
+    return (
+      name !== aiGroupName &&
       name !== aiFallbackGroupName &&
       /AI|OpenAI|ChatGPT/i.test(text) &&
-      /自动|auto|♻/i.test(text);
+      /自动|auto|♻/i.test(text)
+    );
   }
 
   function unique(names) {
@@ -139,13 +190,13 @@ function main(config, profileName) {
 
   function existingProxyGroupNames(names) {
     return unique(names).filter((name) =>
-      proxyGroups.some((group) => group && group.name === name)
+      proxyGroups.some((group) => group && group.name === name),
     );
   }
 
   function firstExistingProxyGroupName(names) {
     return names.find((name) =>
-      proxyGroups.some((group) => group && group.name === name)
+      proxyGroups.some((group) => group && group.name === name),
     );
   }
 
@@ -220,7 +271,9 @@ function main(config, profileName) {
 
       if (/^[A-Z]{2,3}$/.test(keyword)) {
         const escaped = lowerKeyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`).test(lowerText);
+        return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`).test(
+          lowerText,
+        );
       }
 
       return lowerText.includes(lowerKeyword);
@@ -228,9 +281,12 @@ function main(config, profileName) {
   }
 
   function countryNodes(keywords) {
-    return unique(realNodeNames.filter((name) =>
-      isUsableRealNode(name) && includesCountryKeyword(name, keywords)
-    ));
+    return unique(
+      realNodeNames.filter(
+        (name) =>
+          isUsableRealNode(name) && includesCountryKeyword(name, keywords),
+      ),
+    );
   }
 
   function wantedNodesFromGroup(group) {
@@ -249,21 +305,23 @@ function main(config, profileName) {
   }
 
   function findBestSourceGroup(autoGroupName) {
-    const selectGroups = proxyGroups.filter((group) =>
-      group &&
-      group.type === "select" &&
-      Array.isArray(group.proxies)
+    const selectGroups = proxyGroups.filter(
+      (group) =>
+        group && group.type === "select" && Array.isArray(group.proxies),
     );
 
     const groupsContainingAuto = selectGroups.filter((group) =>
-      group.proxies.includes(autoGroupName)
+      group.proxies.includes(autoGroupName),
     );
 
-    const candidates = groupsContainingAuto.length > 0 ? groupsContainingAuto : selectGroups;
+    const candidates =
+      groupsContainingAuto.length > 0 ? groupsContainingAuto : selectGroups;
 
-    return candidates
-      .map((group) => ({ group, nodes: wantedNodesFromGroup(group) }))
-      .sort((a, b) => b.nodes.length - a.nodes.length)[0] || null;
+    return (
+      candidates
+        .map((group) => ({ group, nodes: wantedNodesFromGroup(group) }))
+        .sort((a, b) => b.nodes.length - a.nodes.length)[0] || null
+    );
   }
 
   function addOptionsToSelectGroup(group, options, preferredFirstOptions) {
@@ -276,7 +334,7 @@ function main(config, profileName) {
     group.proxies = unique([
       ...preferredFirstOptions,
       ...options,
-      ...currentProxies
+      ...currentProxies,
     ]);
   }
 
@@ -284,13 +342,14 @@ function main(config, profileName) {
     return config;
   }
 
-  let autoGroups = proxyGroups.filter((group) =>
-    group &&
-    group.type === "url-test" &&
-    group.name !== aiAutoGroupName &&
-    !isAiAutoGroupName(group.name) &&
-    !isCountryAutoGroupName(group.name) &&
-    /自动|auto|♻/i.test(String(group.name || ""))
+  let autoGroups = proxyGroups.filter(
+    (group) =>
+      group &&
+      group.type === "url-test" &&
+      group.name !== aiAutoGroupName &&
+      !isAiAutoGroupName(group.name) &&
+      !isCountryAutoGroupName(group.name) &&
+      /自动|auto|♻/i.test(String(group.name || "")),
   );
 
   if (autoGroups.length === 0) {
@@ -302,7 +361,7 @@ function main(config, profileName) {
       proxies: nodes,
       url: "https://www.gstatic.com/generate_204",
       interval: autoTestInterval,
-      tolerance: 50
+      tolerance: 50,
     };
 
     proxyGroups.unshift(autoGroup);
@@ -317,9 +376,12 @@ function main(config, profileName) {
 
   for (const autoGroup of autoGroups) {
     const source = findBestSourceGroup(autoGroup.name);
-    const nodes = autoGroup.name === defaultAutoGroupName
-      ? allWantedNodes
-      : source?.nodes?.length ? source.nodes : allWantedNodes;
+    const nodes =
+      autoGroup.name === defaultAutoGroupName
+        ? allWantedNodes
+        : source?.nodes?.length
+          ? source.nodes
+          : allWantedNodes;
 
     autoGroup.type = "url-test";
     autoGroup.proxies = nodes;
@@ -350,7 +412,7 @@ function main(config, profileName) {
       group = {
         name: countryGroup.name,
         type: "url-test",
-        proxies: []
+        proxies: [],
       };
       proxyGroups.unshift(group);
     }
@@ -370,12 +432,14 @@ function main(config, profileName) {
       aiAutoGroup = {
         name: aiAutoGroupName,
         type: "url-test",
-        proxies: []
+        proxies: [],
       };
       proxyGroups.unshift(aiAutoGroup);
     }
 
-    for (const group of proxyGroups.filter((item) => item && isAiAutoGroupName(item.name))) {
+    for (const group of proxyGroups.filter(
+      (item) => item && isAiAutoGroupName(item.name),
+    )) {
       group.type = "url-test";
       group.proxies = allAiNodes;
       group.url = group.url || "https://www.gstatic.com/generate_204";
@@ -398,7 +462,7 @@ function main(config, profileName) {
     aiGroup = {
       name: aiGroupName,
       type: "select",
-      proxies: []
+      proxies: [],
     };
     proxyGroups.unshift(aiGroup);
   }
@@ -412,27 +476,34 @@ function main(config, profileName) {
     ...(Array.isArray(aiGroup.proxies)
       ? aiGroup.proxies.filter((name) => !isCountryAutoGroupName(name))
       : []),
-    ...allAiNodes
+    ...allAiNodes,
   ]).filter((name) => !realNodeSet.has(name) || isWantedRealNode(name));
 
   const aiAutoGroupCandidates = proxyGroups
     .filter((group) => group && isAiAutoGroupName(group.name))
     .map((group) => group.name);
 
-  const defaultFallbackCandidates = existingProxyGroupNames([
-    firstExistingProxyGroupName(["新加坡自动选择", "新加坡自动"]),
-    firstExistingProxyGroupName(["日本自动选择", "日本自动"]),
-    firstExistingProxyGroupName(["美国自动选择", "美国自动"]),
-    firstExistingProxyGroupName([aiAutoGroupName, "AI自动选择", ...aiAutoGroupCandidates]),
-    firstExistingProxyGroupName([defaultAutoGroupName, ...autoGroupNames])
-  ].filter(Boolean)).filter((name) => name !== aiFallbackGroupName);
+  const defaultFallbackCandidates = existingProxyGroupNames(
+    [
+      firstExistingProxyGroupName(["新加坡自动选择", "新加坡自动"]),
+      firstExistingProxyGroupName(["日本自动选择", "日本自动"]),
+      firstExistingProxyGroupName(["美国自动选择", "美国自动"]),
+      firstExistingProxyGroupName([
+        aiAutoGroupName,
+        "AI自动选择",
+        ...aiAutoGroupCandidates,
+      ]),
+    ].filter(Boolean),
+  ).filter((name) => name !== aiFallbackGroupName);
 
-  let aiFallbackGroup = proxyGroups.find((group) => group.name === aiFallbackGroupName);
+  let aiFallbackGroup = proxyGroups.find(
+    (group) => group.name === aiFallbackGroupName,
+  );
   if (!aiFallbackGroup) {
     aiFallbackGroup = {
       name: aiFallbackGroupName,
       type: "fallback",
-      proxies: []
+      proxies: [],
     };
     proxyGroups.unshift(aiFallbackGroup);
   }
@@ -441,55 +512,61 @@ function main(config, profileName) {
   aiFallbackGroup.proxies = defaultFallbackCandidates.length
     ? defaultFallbackCandidates
     : allWantedNodes;
-  aiFallbackGroup.url = aiFallbackGroup.url || "https://www.gstatic.com/generate_204";
+  aiFallbackGroup.url =
+    aiFallbackGroup.url || "https://www.gstatic.com/generate_204";
   aiFallbackGroup.interval = aiFallbackGroup.interval || fallbackInterval;
 
   const preferredMainGroupFirstOptions = unique([
     aiFallbackGroupName,
     ...(aiAutoGroup ? [aiAutoGroupName] : []),
     defaultAutoGroupName,
-    ...autoGroupNames
+    ...autoGroupNames,
   ]);
-  const mainSelectGroups = proxyGroups.filter((group) =>
-    group &&
-    group.type === "select" &&
-    group.name !== aiGroupName &&
-    Array.isArray(group.proxies) &&
-    (
-      group.proxies.includes(defaultAutoGroupName) ||
-      autoGroupNames.some((name) => group.proxies.includes(name))
-    )
+  const mainSelectGroups = proxyGroups.filter(
+    (group) =>
+      group &&
+      group.type === "select" &&
+      group.name !== aiGroupName &&
+      Array.isArray(group.proxies) &&
+      (group.proxies.includes(defaultAutoGroupName) ||
+        autoGroupNames.some((name) => group.proxies.includes(name))),
   );
 
   for (const group of mainSelectGroups) {
-    addOptionsToSelectGroup(group, countryGroupNames, preferredMainGroupFirstOptions);
+    addOptionsToSelectGroup(
+      group,
+      countryGroupNames,
+      preferredMainGroupFirstOptions,
+    );
   }
 
   const newRules = forceProxyDomains.map(
-    (domain) => `DOMAIN-SUFFIX,${domain},${aiFallbackGroupName}`
+    (domain) => `DOMAIN-SUFFIX,${domain},${aiFallbackGroupName}`,
   );
 
   // 这些域名即使在“其它代理规则全部走 AI 自动兜底”时，也必须优先直连。
   const directRules = forceDirectDomains.map(
-    (domain) => `DOMAIN-SUFFIX,${domain},DIRECT`
+    (domain) => `DOMAIN-SUFFIX,${domain},DIRECT`,
   );
   const directIpRules = forceDirectCidrs.map(
-    (cidr) => `IP-CIDR,${cidr},DIRECT,no-resolve`
+    (cidr) => `IP-CIDR,${cidr},DIRECT,no-resolve`,
   );
 
   // 先清理旧的强制代理/强制直连规则，避免重复规则影响判断。
   const cleanedOldRules = config.rules.filter((rule) => {
     const text = String(rule);
-    const isForceProxyRule = forceProxyDomains.some((domain) =>
-      text.includes(`DOMAIN-SUFFIX,${domain},`) ||
-      text.includes(`DOMAIN,${domain},`)
+    const isForceProxyRule = forceProxyDomains.some(
+      (domain) =>
+        text.includes(`DOMAIN-SUFFIX,${domain},`) ||
+        text.includes(`DOMAIN,${domain},`),
     );
-    const isForceDirectRule = forceDirectDomains.some((domain) =>
-      text.includes(`DOMAIN-SUFFIX,${domain},`) ||
-      text.includes(`DOMAIN,${domain},`)
+    const isForceDirectRule = forceDirectDomains.some(
+      (domain) =>
+        text.includes(`DOMAIN-SUFFIX,${domain},`) ||
+        text.includes(`DOMAIN,${domain},`),
     );
     const isForceDirectIpRule = forceDirectCidrs.some((cidr) =>
-      text.includes(`IP-CIDR,${cidr},`)
+      text.includes(`IP-CIDR,${cidr},`),
     );
 
     return !isForceProxyRule && !isForceDirectRule && !isForceDirectIpRule;
@@ -497,16 +574,20 @@ function main(config, profileName) {
 
   // 第一步：把已知 AI/自动策略名改到 AI 自动兜底。
   // 第二步：把剩余非 DIRECT/REJECT/PASS 的代理规则也统一改到 AI 自动兜底。
-  const fallbackRulePolicyNames = new Set(unique([
-    aiGroupName,
-    aiAutoGroupName,
-    defaultAutoGroupName,
-    "AI自动选择",
-    ...aiAutoGroupCandidates,
-    ...autoGroupNames
-  ]).filter((name) => name !== aiFallbackGroupName));
+  const fallbackRulePolicyNames = new Set(
+    unique([
+      aiGroupName,
+      aiAutoGroupName,
+      defaultAutoGroupName,
+      "AI自动选择",
+      ...aiAutoGroupCandidates,
+      ...autoGroupNames,
+    ]).filter((name) => name !== aiFallbackGroupName),
+  );
   const rewrittenOldRules = cleanedOldRules
-    .map((rule) => replaceRulePolicy(rule, fallbackRulePolicyNames, aiFallbackGroupName))
+    .map((rule) =>
+      replaceRulePolicy(rule, fallbackRulePolicyNames, aiFallbackGroupName),
+    )
     .map(forceRulePolicyToAiFallback);
 
   // 规则顺序很关键：显式直连优先，其次是强制走 AI 的域名，
