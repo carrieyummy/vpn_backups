@@ -1,1 +1,6 @@
 /clash_overrides/Script.local.js
+
+
+# Python bytecode is generated locally.
+__pycache__/
+*.py[cod]

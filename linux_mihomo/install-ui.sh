@@ -110,6 +110,16 @@ download "$DOWNLOAD_URL" "$ARCHIVE"
 mkdir -p "$EXTRACT_DIR"
 tar -xzf "$ARCHIVE" -C "$EXTRACT_DIR" --strip-components=1
 
+# The upstream gh-pages config leaves defaultBackendURL empty, which makes
+# MetaCubeXD fall back to the browser's own 127.0.0.1:9090.  Use the page's
+# origin instead so the dashboard also works when opened from another device.
+cat > "${EXTRACT_DIR}/config.js" <<'EOF'
+window.__METACUBEXD_CONFIG__ = {
+  // Use the current page origin; do not put a private LAN address in this file.
+  defaultBackendURL: window.location.origin,
+}
+EOF
+
 if [ -e "$TARGET_DIR" ]; then
   if [ "$BACKUP" = "1" ]; then
     BACKUP_DIR="${TARGET_DIR}.bak.$(date +%Y%m%d-%H%M%S)"

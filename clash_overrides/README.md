@@ -142,20 +142,22 @@ const forceDirectCidrs = [
 
 如果单个新加坡节点超时，`新加坡自动` 会先尝试其它新加坡节点。只有当整个 `新加坡自动` 不可用时，`AI自动兜底` 才会切到 `日本自动`。
 
-默认健康检查间隔是：
+默认健康检查间隔均为 120 秒，但由两个独立配置项控制：
 
 ```text
-interval: 300
+autoTestInterval: 120  # url-test 自动测速组
+fallbackInterval: 120  # fallback 兜底组
 ```
 
-也就是大约 300 秒检查一次。前面的候选组恢复后，`fallback` 会在后续健康检查中切回更靠前的可用组。
+也就是大约每 120 秒检查一次。前面的候选组恢复后，`fallback` 会在后续健康检查中切回更靠前的可用组。
 
 ## 常见调整
 
-如果想更快发现节点故障或恢复，可以把脚本里的 `interval` 从 `300` 改小，例如：
+如果想更快发现节点故障或恢复，可以分别把脚本开头的 `autoTestInterval`（`url-test` 自动测速组）和 `fallbackInterval`（`fallback` 兜底组）从 `120` 改小，例如：
 
 ```js
-interval: 60
+const autoTestInterval = 60;
+const fallbackInterval = 60;
 ```
 
 如果想调整地区优先级，可以修改 `defaultFallbackCandidates` 里的候选顺序。

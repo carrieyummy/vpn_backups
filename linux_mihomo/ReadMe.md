@@ -37,9 +37,12 @@ $HOME/.config/mihomo/config.yaml
 
 ## 2. 下载与安装 Mihomo
 
+Mihomo 项目主页：[MetaCubeX/mihomo](https://github.com/MetaCubeX/mihomo)。
+
+
 当前实际验证过的安装方式，是使用本目录中的 Debian 安装包：
 
-- `mihomo-linux-amd64-v1-alpha-df1c5e5.deb`
+- `mihomo-linux-amd64-v3-v1.19.28.deb`（正式版 `1.19.28`，GOAMD64=v3，需 CPU 支持 AVX2 等指令集）
 
 该安装包适用于 amd64 / x86_64 Linux。建议优先使用这个包安装，避免直接使用未测试脚本。
 
@@ -47,10 +50,10 @@ $HOME/.config/mihomo/config.yaml
 cd /path/to/vpn_backups/linux_mihomo
 
 # 安装已验证过的 deb 包
-sudo apt install ./mihomo-linux-amd64-v1-alpha-df1c5e5.deb
+sudo apt install ./mihomo-linux-amd64-v3-v1.19.28.deb
 
 # 如果 apt 无法直接安装本地包，可改用 dpkg
-sudo dpkg -i ./mihomo-linux-amd64-v1-alpha-df1c5e5.deb
+sudo dpkg -i ./mihomo-linux-amd64-v3-v1.19.28.deb
 sudo apt-get install -f
 ```
 
@@ -71,7 +74,7 @@ chmod +x ./untested_install-mihomo.sh
 
 ## 3. 自启动服务
 
-`mihomo-linux-amd64-v1-alpha-df1c5e5.deb` 包含系统级 systemd 服务文件：
+`mihomo-linux-amd64-v3-v1.19.28.deb` 包含系统级 systemd 服务文件：
 
 ```text
 /usr/lib/systemd/system/mihomo.service
@@ -222,7 +225,7 @@ systemctl --user status mihomo.service
 
 ## 7. MetaCubeXD 面板安装
 
-`install-ui.sh` 用于从 `https://github.com/metacubex/metacubexd` 的 `gh-pages` 分支下载静态面板。
+`install-ui.sh` 用于从 `https://github.com/metacubex/metacubexd` 的 `gh-pages` 分支下载已构建的静态面板。每次安装时，脚本都会把面板的 `config.js` 写为使用当前访问地址，避免上游默认空值导致远程浏览器连接到自身的 `127.0.0.1:9090`。
 
 脚本默认安装到本项目的 `./mihomo/ui-metacubexd/`，不需要把脚本复制到 `~/.config/mihomo` 再运行。
 
@@ -260,13 +263,15 @@ MetaCubeXD 静态面板的默认后端地址配置在：
 ./mihomo/ui-metacubexd/config.js
 ```
 
-其中：
+安装脚本会写入：
 
 ```js
-defaultBackendURL: window.location.origin
+ defaultBackendURL: window.location.origin
 ```
 
-这个配置会在浏览器打开面板时自动使用当前访问地址作为 Mihomo 后端。例如你访问 `http://<mihomo所在机器的IP>:9090/ui/`，`window.location.origin` 会自动得到 `http://<mihomo所在机器的IP>:9090`。
+这个配置会在浏览器打开面板时自动使用当前访问地址作为 Mihomo 后端。例如你访问 `http://<MIHOMO_LAN_IP>:9090/ui/`，`window.location.origin` 会自动得到 `http://<MIHOMO_LAN_IP>:9090`。
+
+上游 `gh-pages` 分支的 `config.js` 默认值为空字符串。当前 MetaCubeXD 会把空值和未设置该字段都视为未指定后端，并回退到 `http://127.0.0.1:9090`；这指向的是浏览器所在设备，而不是运行 Mihomo 的机器。因此不要用上游原始 `config.js` 覆盖这里的版本；若手动覆盖，重新运行 `install-ui.sh` 即可恢复上述配置。
 
 当前配置里：
 
@@ -471,10 +476,14 @@ proxy-providers:
     health-check:
       enable: true
       url: https://www.gstatic.com/generate_204
-      interval: 300
+      interval: *speedtest_interval
 ```
 
 如果这个订阅源需要特殊请求头，例如指定 `User-Agent`，可以参考 `魔戒` 的写法添加 `header`。
+
+测速间隔由 YAML 锚点变量 `speedtest_interval` 统一管理。现有配置在第一个订阅的健康检查中定义 `interval: &speedtest_interval 60`，其中 `60` 表示每 60 秒测速一次；其他位置使用 `interval: *speedtest_interval` 引用这个值。它同时控制订阅提供者的 `health-check`、`url-test` 自动选择组和 `fallback` 故障转移组的测速频率。需要调整频率时，只修改 `&speedtest_interval` 定义处的数值即可。
+
+不要将它与订阅提供者的 `interval: 21600` 混淆：后者控制订阅链接的拉取频率（当前为每 6 小时），前者控制节点延迟检测频率。
 
 1. 在 `proxy-groups` 里为新订阅增加基础策略组：
 
@@ -488,7 +497,7 @@ proxy-providers:
   - name: 新订阅自动选择
     type: url-test
     url: https://www.gstatic.com/generate_204
-    interval: 300
+    interval: *speedtest_interval
     tolerance: 50
     exclude-filter: "^(剩余流量|套餐到期)"
     use:
@@ -497,7 +506,7 @@ proxy-providers:
   - name: 新订阅故障转移
     type: fallback
     url: https://www.gstatic.com/generate_204
-    interval: 300
+    interval: *speedtest_interval
     exclude-filter: "^(剩余流量|套餐到期)"
     use:
       - 新订阅
@@ -505,7 +514,7 @@ proxy-providers:
   - name: AI新订阅自动
     type: url-test
     url: https://www.gstatic.com/generate_204
-    interval: 300
+    interval: *speedtest_interval
     tolerance: 50
     exclude-filter: "香港|台湾|台灣|🇭🇰|🇹🇼|HK|HKT|TW|WAP|^(剩余流量|套餐到期)"
     use:

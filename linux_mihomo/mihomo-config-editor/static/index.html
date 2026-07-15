@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mihomo 配置编辑器</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Mihomo 配置编辑器</h1>
+          <p id="config-meta">正在连接...</p>
+        </div>
+        <div class="top-actions">
+          <button id="reload-btn" class="secondary" type="button">刷新</button>
+          <button id="restart-btn" class="danger" type="button">重启内核服务</button>
+        </div>
+      </header>
+
+      <main>
+        <div class="tabs" role="tablist" aria-label="编辑模式">
+          <button class="tab active" type="button" data-tab="targeted" role="tab" aria-selected="true">表单编辑</button>
+          <button class="tab" type="button" data-tab="yaml" role="tab" aria-selected="false">完整 YAML</button>
+        </div>
+
+        <section id="targeted-panel" class="panel active" role="tabpanel">
+          <div class="section-title">
+            <h2>局域网白名单</h2>
+            <span>每行一个条目，支持 # 注释</span>
+          </div>
+          <textarea id="lan-text" class="textarea" spellcheck="false" rows="8"></textarea>
+
+          <div class="section-title providers-title">
+            <h2>Proxy Providers URL</h2>
+            <span>只修改现有 provider 的 url 字段</span>
+          </div>
+          <div id="providers" class="providers"></div>
+
+          <div class="action-row">
+            <button id="save-targeted-btn" type="button">保存表单修改</button>
+            <span id="targeted-status" class="status muted">尚未加载配置</span>
+          </div>
+        </section>
+
+        <section id="yaml-panel" class="panel" role="tabpanel">
+          <div class="section-title">
+            <h2>完整 config.yaml</h2>
+            <span>可粘贴替换完整配置，保存前会校验 YAML</span>
+          </div>
+          <div class="editor-shell">
+            <pre id="line-numbers" class="line-numbers" aria-hidden="true">1</pre>
+            <textarea id="yaml-editor" class="yaml-editor" spellcheck="false" wrap="off"></textarea>
+          </div>
+          <div class="action-row">
+            <button id="save-yaml-btn" type="button" disabled>保存完整 YAML</button>
+            <span id="yaml-status" class="status muted">等待加载配置</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="auth-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <form id="auth-form" class="auth-box">
+        <h2 id="auth-title">输入访问密钥</h2>
+        <p>使用 ~/.config/mihomo/secret 中的密钥访问配置编辑器。</p>
+        <input id="auth-token" type="password" autocomplete="current-password" placeholder="密钥">
+        <div class="auth-actions">
+          <button type="submit">连接</button>
+        </div>
+        <p id="auth-error" class="status danger-text"></p>
+      </form>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
