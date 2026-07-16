@@ -122,6 +122,7 @@ function main(config, profileName) {
     "lync.com",
     "broadcast.skype.com",
     "login.microsoftonline.com",
+    "login.windows.net",
     "microsoftonline.com",
     "msftauth.net",
     "msauth.net",
