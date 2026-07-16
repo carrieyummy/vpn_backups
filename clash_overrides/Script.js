@@ -1,8 +1,8 @@
 function main(config, profileName) {
   // 自动测速/url-test 健康检查间隔，单位：秒。
-  const autoTestInterval = 120;
+  const autoTestInterval = 60;
   // fallback 兜底健康检查间隔，单位：秒。
-  const fallbackInterval = 120;
+  const fallbackInterval = 60;
   const defaultAutoGroupName = "自动选择";
   const aiGroupName = "AI";
   const aiAutoGroupName = "AI自动";
@@ -389,6 +389,7 @@ function main(config, profileName) {
     autoGroup.url = autoGroup.url || "https://www.gstatic.com/generate_204";
     autoGroup.interval = autoGroup.interval || autoTestInterval;
     autoGroup.tolerance = autoGroup.tolerance || 50;
+    autoGroup.lazy = false;
 
     if (source?.group && !source.group.proxies.includes(autoGroup.name)) {
       source.group.proxies.unshift(autoGroup.name);
@@ -423,6 +424,7 @@ function main(config, profileName) {
     group.url = group.url || "https://www.gstatic.com/generate_204";
     group.interval = group.interval || autoTestInterval;
     group.tolerance = group.tolerance || 50;
+    group.lazy = false;
     countryGroupNames.push(group.name);
   }
 
@@ -446,6 +448,7 @@ function main(config, profileName) {
       group.url = group.url || "https://www.gstatic.com/generate_204";
       group.interval = group.interval || autoTestInterval;
       group.tolerance = group.tolerance || 50;
+      group.lazy = false;
     }
   } else {
     for (let i = proxyGroups.length - 1; i >= 0; i -= 1) {
@@ -516,6 +519,7 @@ function main(config, profileName) {
   aiFallbackGroup.url =
     aiFallbackGroup.url || "https://www.gstatic.com/generate_204";
   aiFallbackGroup.interval = aiFallbackGroup.interval || fallbackInterval;
+  aiFallbackGroup.lazy = false;
 
   const preferredMainGroupFirstOptions = unique([
     aiFallbackGroupName,
