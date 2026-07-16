@@ -11,6 +11,7 @@
 <li>提供多种自动测速分组、fallback 兜底分组和按地区筛选的 AI 节点池，支持 Clash 覆写脚本与 Linux Mihomo 配置。</li>
 <li>通过自动测速、故障转移和兜底策略，让客户端在节点异常时自动切换。</li>
 <li>保留不同平台的配置和脚本，方便重装系统、迁移设备或快速恢复环境。</li>
+<li>让局域网内已加入白名单的设备可通过浏览器管理 Mihomo 配置，无需登录运行 Mihomo 的 Linux 主机。</li>
 </ul>
 </strong></font>
 
@@ -25,9 +26,19 @@
 
 ## 效果图
 
-### MetaCubeXD
+### Linux：MetaCubeXD
+
+局域网内可访问：`http://<MIHOMO_LAN_IP>:9090/ui/#/overview`。登录后可查看实时流量、内存和连接情况。
+
+![MetaCubeXD 概览效果图](./img/ui-metacubexd-overview.png)
 
 ![MetaCubeXD 节点选择效果图](./img/ui-metacubexd.png)
+
+### Linux：Mihomo 配置编辑器
+
+局域网内可访问：维护 Mihomo 白名单、订阅 URL 和完整配置；编辑器本身仍需使用访问凭据登录，保存前会进行 YAML 校验。编辑器的使用说明见 [`linux_mihomo/ReadMe.md`](./linux_mihomo/ReadMe.md#51-mihomo-配置编辑器)。截图中的订阅地址、配置哈希和具体内网 IP 已脱敏，`10.100.10.` 后的数字已遮蔽。
+
+![Mihomo 配置编辑器表单编辑效果](./img/mihomo-config-editor.png)
 
 ### Clash Verge
 

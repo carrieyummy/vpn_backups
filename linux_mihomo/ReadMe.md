@@ -4,17 +4,30 @@
 
 ## 1. 目录约定
 
-这个 `vpn_backups` 项目可以下载到 Linux 机器上的任意目录。下面示例用 `PROJECT_DIR` 表示实际下载后的目录，请按你的实际路径进入：
+以下以当前 `linux_mihomo/` 目录为准。这个 `vpn_backups` 项目可以下载到 Linux 机器上的任意位置；下面用 `PROJECT_DIR` 表示实际下载后的项目根目录：
 
 ```bash
-cd /path/to/vpn_backups/linux_mihomo
+cd "$PROJECT_DIR/linux_mihomo"
 ```
 
-本项目里的 `mihomo/` 目录用于保存要备份的 Mihomo 配置：
+<table>
+  <thead>
+    <tr><th>文件夹</th><th>文件夹</th><th>含义</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>./</td><td><code>mihomo/</code></td><td>要备份的 Mihomo 配置模板目录。<code>config.yaml</code> 是配置模板；同步后会成为实际运行配置。</td></tr>
+    <tr><td rowspan="3"><code>./mihomo/</code></td><td><code>providers/</code></td><td>运行时订阅节点文件目录。该目录仅保留 <code>.gitkeep</code>，实际 provider 文件可能包含订阅内容，不提交到仓库。</td></tr>
+    <tr><td><code>mihomo/ui-metacubexd/</code></td><td>MetaCubeXD 静态面板目录；运行 <code>install-ui.sh</code> 后生成或更新。</td></tr>
+    <tr><td><code>mihomo/mihomo-config-web/</code></td><td>一套 Mihomo 配置网页编辑器的源码、静态资源和使用说明。</td></tr>
+    <tr><td>./</td><td><code>mihomo-config-editor/</code></td><td>Mihomo 配置网页编辑器的源码、静态资源和部署说明。</td></tr>
+    <tr><td><code>./mihomo-config-editor/</code></td><td><code>backups/</code></td><td>配置编辑器创建的备份目录；只跟踪 <code>.gitkeep</code>，实际备份文件不应提交。</td></tr>
+    <tr><td>./</td><td><code>linux_setting/</code></td><td>Linux 网络与代理设置相关的参考截图。</td></tr>
+    <tr><td>./</td><td><code>bashrc/</code></td><td>可按需合并到用户 <code>.bashrc</code> 的 Shell 配置片段。</td></tr>
+    <tr><td>./</td><td><code>.codex/</code></td><td>本项目的 Codex 本地环境模板；其中 <code>.env</code> 仅使用占位符，不能填写真实运行值。</td></tr>
+  </tbody>
+</table>
 
-- `./mihomo/config.yaml`
-- `./mihomo/providers/`
-- `./mihomo/ui-metacubexd/`，执行 `install-ui.sh` 后生成
+根目录中的 `install-ui.sh` 用于安装或更新 MetaCubeXD，`mihomo-linux-amd64-v3-v1.19.28.deb` 是已验证的 Mihomo 安装包，`untested_install-mihomo.sh` 是备用安装脚本。
 
 Mihomo 实际运行时读取的用户配置目录是：
 
@@ -177,6 +190,26 @@ systemctl --user enable mihomo.service
 systemctl --user disable mihomo.service
 ```
 
+### 5.1 Mihomo 配置编辑器
+
+`mihomo-config-editor/` 是一个局域网内使用的 `config.yaml` 网页编辑器。它使用 `${HOME}/.config/mihomo/secret` 中的密钥登录，并读取或更新实际运行目录中的 `${HOME}/.config/mihomo/config.yaml`。访问地址使用：
+
+```text
+http://<MIHOMO_LAN_IP>:9091
+```
+
+页面提供以下操作：
+
+- 以表单维护 `lan-allowed-ips` 和已有 `proxy-providers` 的 URL。
+- 切换到完整 YAML 编辑模式，保存前先校验 YAML 格式。
+- 刷新配置，或在确认后重启 Mihomo 内核服务。
+
+下图为表单编辑效果。图片中的订阅地址、配置哈希和具体内网 IP 已脱敏；`10.100.10.` 后的数字均已遮蔽。
+
+![Mihomo 配置编辑器表单编辑效果](../img/mihomo-config-editor.png)
+
+部署文件、服务管理命令及端口检查见 [`mihomo-config-editor/ReadMe.md`](./mihomo-config-editor/ReadMe.md)。真实订阅地址和密钥只保留在运行时私密文件中，不要填写到仓库中的文档、截图或配置模板。
+
 ## 6. TUN 权限说明
 
 当前方案是给 `mihomo` 二进制授予 TUN 所需能力，以便用户级服务正常使用 TUN。
@@ -324,9 +357,12 @@ proxy-providers:
 
 如果 Cursor 远程 extensionHost 或 Codex 相关插件没有继承宿主代理，可能会直连并反复 reconnect。优先在 shell 环境里显式设置代理变量；必要时再在 Linux 图形界面里设置系统网络代理。
 
-Codex 插件使用的代理环境变量配置参考 [`linux_mihomo/.codex/.env`](./.codex/.env)。如果是其他 shell、服务或插件环境，请按该文件里的变量写法调整到对应配置位置。
+Linux shell、Codex 插件使用的代理环境变量配置：
 
-Linux 图形界面的手动代理设置可以参考下图：
+- [`linux_mihomo/.codex/.env`](./.codex/.env)
+- [`bashrc/.bashrc`](./bashrc/.bashrc)
+
+Linux 图形界面代理设置：
 
 ![Linux 网络代理手动设置](./linux_setting/linux-network-proxy-manual-settings.png)
 
