@@ -212,7 +212,11 @@ http://<MIHOMO_LAN_IP>:9091
 
 ## 6. TUN 权限说明
 
-当前方案是给 `mihomo` 二进制授予 TUN 所需能力，以便用户级服务正常使用 TUN。
+**使用 ChatGPT、Codex 无需开启 TUN**
+
+当前 `config.yaml` 已为 Codex 所需的 OpenAI 相关域名配置代理规则。因此，只要 Mihomo 服务正常运行，Codex 即可通过该规则访问网络，**无需开启 TUN，也无需执行本节的 `setcap` 授权命令**。
+
+本章节的方案说明如何给 `mihomo` 授予 TUN 所需能力，以便用户级服务正常使用 TUN。
 
 ```bash
 # 授予能力
