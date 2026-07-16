@@ -28,7 +28,9 @@
 
 ### Linux：MetaCubeXD
 
-局域网内可访问：`http://<MIHOMO_LAN_IP>:9090/ui/#/overview`。登录后可查看实时流量、内存和连接情况。
+局域网内可访问：`http://<MIHOMO_LAN_IP>:9090/ui/#/overview`。
+
+- 登录后可查看实时流量、内存和连接情况、手动切换代理。
 
 ![MetaCubeXD 概览效果图](./img/ui-metacubexd-overview.png)
 
@@ -36,7 +38,11 @@
 
 ### Linux：Mihomo 配置编辑器
 
-局域网内可访问：维护 Mihomo 白名单、订阅 URL 和完整配置；编辑器本身仍需使用访问凭据登录，保存前会进行 YAML 校验。编辑器的使用说明见 [`linux_mihomo/ReadMe.md`](./linux_mihomo/ReadMe.md#51-mihomo-配置编辑器)。截图中的订阅地址、配置哈希和具体内网 IP 已脱敏，`10.100.10.` 后的数字已遮蔽。
+局域网内可访问：`http://<MIHOMO_LAN_IP>:9091`。
+
+- 维护 Mihomo 白名单、订阅 URL 和完整配置；编辑器本身仍需使用访问凭据登录，保存前会进行 YAML 校验。
+- 编辑器的使用说明见 [`linux_mihomo/ReadMe.md`](./linux_mihomo/ReadMe.md#51-mihomo-配置编辑器)。
+- 截图中的订阅地址、配置哈希和具体内网 IP 已脱敏。
 
 ![Mihomo 配置编辑器表单编辑效果](./img/mihomo-config-editor.png)
 
