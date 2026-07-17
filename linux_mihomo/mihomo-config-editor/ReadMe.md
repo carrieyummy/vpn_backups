@@ -2,7 +2,7 @@
 
 一个局域网内使用的 `config.yaml` 简易网页编辑器。
 
-- 访问地址：`http://10.100.10.33:9091/`
+- 访问地址：`http://<MIHOMO_LAN_IP>:9091/`
 - 登录密钥：读取 `/home/azurengine/.config/mihomo/secret`
 - 配置文件：`/home/azurengine/.config/mihomo/config.yaml`
 - 服务文件：`/home/azurengine/.config/systemd/user/mihomo-config-editor.service`
