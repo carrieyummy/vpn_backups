@@ -5,6 +5,7 @@
 ## 项目目标
 
 <font color="#d73a49"><strong>
+
 <ul>
 <li>让 OpenAI、ChatGPT 等国外 AI 服务默认走可用的海外节点。</li>
 <li>避免 AI 流量误走中国（包括香港、台湾）不适合的节点，且优先走新加坡节点。</li>
@@ -17,10 +18,10 @@
 
 ## 目录说明
 
-| 目录 | 用途 | 详细说明 |
-| --- | --- | --- |
-| [`clash_overrides/`](./clash_overrides/) | Clash Verge / Clash Verge Rev / FlClash 的 JavaScript 覆写脚本 | 查看 [`clash_overrides/README.md`](./clash_overrides/README.md) |
-| [`linux_mihomo/`](./linux_mihomo/) | Linux 上运行 Mihomo 的配置、安装包和辅助脚本 | 查看 [`linux_mihomo/ReadMe.md`](./linux_mihomo/ReadMe.md) |
+| 目录                                     | 用途                                         | 详细说明                                                        |
+| ---------------------------------------- | -------------------------------------------- | --------------------------------------------------------------- |
+| [`clash_overrides/`](./clash_overrides/) | Clash 系客户端的 JavaScript 覆写脚本         | 查看 [`clash_overrides/README.md`](./clash_overrides/README.md) |
+| [`linux_mihomo/`](./linux_mihomo/)       | Linux 上运行 Mihomo 的配置、安装包和辅助脚本 | 查看 [`linux_mihomo/ReadMe.md`](./linux_mihomo/ReadMe.md)       |
 
 > 根目录只做项目入口和使用导航。具体安装、配置、调整方式请点击上面的子目录 README 查看。
 
@@ -40,7 +41,8 @@
 
 局域网内可访问：`http://<MIHOMO_LAN_IP>:9091`。
 
-- 维护 Mihomo 白名单、订阅 URL 和完整配置；编辑器本身仍需使用访问凭据登录，保存前会进行 YAML 校验。
+- 维护 Mihomo 白名单、订阅 URL、远程主机代理环境变量和本机mihomo的 yaml 配置文件。
+- 需使用访问凭据登录。
 - 编辑器的使用说明见 [`linux_mihomo/ReadMe.md`](./linux_mihomo/ReadMe.md#51-mihomo-配置编辑器)。
 - 截图中的订阅地址、配置哈希和具体内网 IP 已脱敏。
 
@@ -49,6 +51,10 @@
 ### Clash Verge
 
 ![Clash Verge 代理组效果图](./img/clash_verge.png)
+
+### Clash Mi
+
+![Clash Mi 代理组效果图](./img/clash_mi.png)
 
 ### FlClash
 
