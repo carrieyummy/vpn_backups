@@ -1,0 +1,18 @@
+# Runtime credential store (contains encrypted passwords and its decryption key)
+remote_credentials.db
+remote_credentials.key
+
+# Local configuration snapshots created by the editor
+backups/*.bak
+backups/.config.yaml.*.tmp
+
+# Python test and bytecode artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local environments and developer secrets
+.venv/
+venv/
+.env
+.env.*

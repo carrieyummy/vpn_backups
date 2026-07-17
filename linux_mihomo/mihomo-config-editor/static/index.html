@@ -42,6 +42,49 @@
             <button id="save-targeted-btn" type="button">保存表单修改</button>
             <span id="targeted-status" class="status muted">尚未加载配置</span>
           </div>
+
+          <section class="remote-proxy-section" aria-labelledby="remote-proxy-title">
+            <div class="section-title">
+              <h2 id="remote-proxy-title">远程 Linux 代理环境</h2>
+              <span>同步 ~/.bashrc 和 ~/.codex/.env</span>
+            </div>
+            <p class="remote-proxy-note">可从局域网白名单选择 IP，也可手动输入；首次成功登录后会加密保存凭据。请仅在可信局域网内使用。</p>
+            <form id="remote-proxy-form" class="remote-proxy-form">
+              <label>
+                <span>IP 地址</span>
+                <div id="remote-host-control" class="remote-host-control">
+                  <input id="remote-host" type="text" inputmode="text" autocomplete="off" placeholder="可选择或输入其他 IP" required role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="remote-host-options">
+                  <button id="remote-host-toggle" class="remote-host-toggle" type="button" aria-label="显示 IP 列表" aria-expanded="false" aria-controls="remote-host-options">▾</button>
+                  <div id="remote-host-options" class="remote-host-options" role="listbox" hidden></div>
+                </div>
+              </label>
+              <label>
+                <span>用户名</span>
+                <input id="remote-username" type="text" autocomplete="username" placeholder="选择已保存 IP 后自动填充">
+              </label>
+              <label>
+                <span>登录密码</span>
+                <input id="remote-password" type="password" autocomplete="off" placeholder="选择已保存 IP 后可留空">
+              </label>
+              <div class="remote-proxy-actions">
+                <button id="remote-preview-btn" type="submit">检查并预览</button>
+                <button id="remote-apply-btn" class="danger" type="button" disabled>确认同步</button>
+                <button id="remote-remove-btn" class="danger" type="button" disabled>从远程删除配置</button>
+              </div>
+            </form>
+            <div id="remote-preview" class="remote-preview" hidden>
+              <p id="remote-fingerprint" class="status muted"></p>
+              <div id="remote-plan" class="remote-plan"></div>
+            </div>
+            <div id="remote-result" class="remote-result" hidden>
+              <div class="section-title remote-result-title">
+                <h3>同步后的远端文件</h3>
+                <span>只读；可使用滚动条查看长内容</span>
+              </div>
+              <div id="remote-file-results" class="remote-file-results"></div>
+            </div>
+            <p id="remote-status" class="status muted" aria-live="polite">尚未检查远端文件。</p>
+          </section>
         </section>
 
         <section id="yaml-panel" class="panel" role="tabpanel">

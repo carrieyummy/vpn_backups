@@ -94,6 +94,7 @@ button.danger:hover {
 
 h1,
 h2,
+h3,
 p {
   margin: 0;
 }
@@ -105,6 +106,11 @@ h1 {
 
 h2 {
   font-size: 16px;
+  line-height: 1.25;
+}
+
+h3 {
+  font-size: 14px;
   line-height: 1.25;
 }
 
@@ -171,6 +177,187 @@ h2 {
 
 .providers-title {
   margin-top: 22px;
+}
+
+.remote-proxy-section {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.remote-proxy-note {
+  margin: -2px 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.remote-proxy-form {
+  display: grid;
+  grid-template-columns: minmax(170px, 1fr) minmax(150px, 1fr) minmax(180px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.remote-proxy-form label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.remote-proxy-form input {
+  min-width: 0;
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.remote-host-control {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 38px;
+}
+
+.remote-proxy-form .remote-host-control input {
+  border-radius: 6px 0 0 6px;
+}
+
+.remote-host-toggle {
+  min-height: 38px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-left: 0;
+  border-radius: 0 6px 6px 0;
+  color: var(--text);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.remote-host-toggle:hover,
+.remote-host-toggle:focus-visible {
+  background: #f1f4ee;
+}
+
+.remote-host-options {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 5px 14px rgb(36 47 38 / 16%);
+  background: var(--surface);
+}
+
+.remote-host-option {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 0;
+  color: var(--text);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.remote-host-option:hover,
+.remote-host-option:focus-visible {
+  background: #f1f4ee;
+}
+
+.remote-proxy-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.remote-preview,
+.remote-result {
+  margin-top: 16px;
+}
+
+.remote-preview .status {
+  min-width: 0;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.remote-plan {
+  display: grid;
+  gap: 8px;
+}
+
+.remote-plan-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcf9;
+}
+
+.remote-plan-file {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
+.remote-plan-detail {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.remote-result-title {
+  margin-bottom: 10px;
+}
+
+.remote-file-results {
+  display: grid;
+  gap: 14px;
+}
+
+.remote-file-result {
+  border: 1px solid var(--code-line);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--code-bg);
+}
+
+.remote-file-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--code-line);
+  color: var(--code-text);
+  background: #171c18;
+}
+
+.remote-file-heading span {
+  color: var(--code-muted);
+  font-size: 12px;
+}
+
+.remote-file-content {
+  max-height: 320px;
+  margin: 0;
+  padding: 12px;
+  overflow: auto;
+  color: var(--code-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre;
 }
 
 .textarea,
@@ -343,6 +530,19 @@ h2 {
   .provider-row {
     grid-template-columns: 1fr;
     gap: 6px;
+  }
+
+  .remote-proxy-form,
+  .remote-plan-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remote-proxy-actions {
+    width: 100%;
+  }
+
+  .remote-proxy-actions button {
+    width: 100%;
   }
 
   .status {
